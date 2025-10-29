@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Training Analytics | MACRO Development and Training</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #305144 0%, #32443f 100%);
+            color: #333;
+            line-height: 1.6;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .logo {
+            font-size: 2.8em;
+            font-weight: bold;
+            background: linear-gradient(135deg, #305144 0%, #20b068 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #666;
+            font-size: 1.2em;
+            margin-bottom: 25px;
+        }
+
+        .hero-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .hero-stat {
+            background: linear-gradient(135deg, #305144 0%, #20b068 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(32, 176, 104, 0.3);
+        }
+
+        .hero-stat-number {
+            font-size: 3.2em;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .hero-stat-label {
+            font-size: 1em;
+            opacity: 0.95;
+        }
+
+        .section {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #305144;
+            margin-bottom: 25px;
+            font-size: 2.2em;
+            border-bottom: 4px solid #20b068;
+            padding-bottom: 12px;
+        }
+
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .chart-container {
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .chart-title {
+            font-size: 1.4em;
+            color: #305144;
+            font-weight: 600;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .stats-highlight {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .stat-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ebe9 100%);
+            padding: 25px;
+            border-radius: 10px;
+            border-left: 5px solid #20b068;
+            text-align: center;
+        }
+
+        .stat-box-number {
+            font-size: 2.5em;
+            color: #305144;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-box-label {
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        .quotes-section {
+            margin-top: 40px;
+        }
+
+        .quote-card {
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-left: 5px solid #20b068;
+            padding: 30px;
+            margin-bottom: 25px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .quote-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(32, 176, 104, 0.2);
+        }
+
+        .quote-text {
+            font-size: 1.15em;
+            color: #444;
+            line-height: 1.8;
+            font-style: italic;
+        }
+
+        .quote-icon {
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            font-size: 4em;
+            color: #20b068;
+            opacity: 0.1;
+            font-family: Georgia, serif;
+        }
+
+        .featured-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #305144 0%, #20b068 100%);
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .cta-section {
+            background: linear-gradient(135deg, #305144 0%, #20b068 100%);
+            color: white;
+            padding: 60px;
+            border-radius: 15px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .cta-section h2 {
+            color: white;
+            border-bottom: 4px solid white;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .cta-text {
+            font-size: 1.3em;
+            margin-bottom: 30px;
+            line-height: 1.8;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 18px 45px;
+            background: white;
+            color: #305144;
+            text-decoration: none;
+            border-radius: 35px;
+            font-weight: bold;
+            font-size: 1.15em;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cta-button:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px rgba(255,255,255,0.4);
+        }
+
+        @media (max-width: 768px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .logo {
+                font-size: 2em;
+            }
+            
+            .hero-stat-number {
+                font-size: 2.2em;
+            }
+            
+            h2 {
+                font-size: 1.7em;
+            }
+            
+            .section {
+                padding: 25px;
+            }
+        }
+
+        .insights-box {
+            background: #e8f5e9;
+            border-left: 5px solid #20b068;
+            padding: 25px;
+            margin: 30px 0;
+            border-radius: 8px;
+        }
+
+        .insights-box h3 {
+            color: #305144;
+            font-size: 1.3em;
+            margin-bottom: 15px;
+        }
+
+        .insights-box ul {
+            margin-left: 20px;
+        }
+
+        .insights-box li {
+            margin-bottom: 10px;
+            color: #444;
+            line-height: 1.6;
+        }
+
+        .tabs-container {
+            margin-top: 40px;
+        }
+
+        .tab-buttons {
+            display: flex;
+            gap: 0;
+            border-bottom: 3px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 18px 30px;
+            background: #f5f5f5;
+            border: none;
+            border-bottom: 3px solid transparent;
+            color: #666;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            margin-bottom: -3px;
+        }
+
+        .tab-button:hover {
+            background: #e8f5e9;
+            color: #305144;
+        }
+
+        .tab-button.active {
+            background: white;
+            color: #305144;
+            border-bottom: 3px solid #20b068;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .etp-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e9 100%);
+            padding: 40px;
+            border-radius: 12px;
+            border-left: 5px solid #20b068;
+        }
+
+        .etp-header {
+            display: flex;
+            align-items: center;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .etp-logo-container {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .etp-logo {
+            height: 80px;
+            width: auto;
+        }
+
+        .etp-title {
+            font-size: 1.8em;
+            color: #305144;
+            font-weight: bold;
+        }
+
+        .etp-subtitle {
+            font-size: 1.1em;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .etp-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+        }
+
+        .etp-content h3 {
+            color: #305144;
+            font-size: 1.4em;
+            margin-bottom: 15px;
+            margin-top: 25px;
+        }
+
+        .etp-content h3:first-child {
+            margin-top: 0;
+        }
+
+        .etp-content p, .etp-content ul {
+            color: #444;
+            line-height: 1.8;
+            font-size: 1.05em;
+        }
+
+        .etp-content ul {
+            margin-left: 25px;
+            margin-top: 15px;
+        }
+
+        .etp-content li {
+            margin-bottom: 12px;
+        }
+
+        .etp-highlight {
+            background: linear-gradient(135deg, #305144 0%, #20b068 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 25px 0;
+            text-align: center;
+            font-size: 1.15em;
+            font-weight: 600;
+            box-shadow: 0 5px 15px rgba(32, 176, 104, 0.3);
+        }
+
+        .ai-governance-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e8f5e9 100%);
+            padding: 40px;
+            border-radius: 12px;
+            border-left: 5px solid #305144;
+        }
+
+        .service-box {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+            border-left: 4px solid #20b068;
+        }
+
+        .service-box h3 {
+            color: #305144;
+            font-size: 1.3em;
+            margin-bottom: 12px;
+        }
+
+        .service-box p {
+            color: #555;
+            line-height: 1.7;
+            font-size: 1.05em;
+        }
+
+        @media (max-width: 768px) {
+            .tab-button {
+                padding: 14px 15px;
+                font-size: 0.95em;
+            }
+            
+            .etp-header {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+
+        .metric-card {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ebe9 100%);
+            padding: 25px;
+            border-radius: 10px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-left: 4px solid #20b068;
+        }
+
+        .metric-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 20px rgba(32, 176, 104, 0.3);
+        }
+
+        .metric-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.05em;
+        }
+
+        .metric-rating {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .metric-number {
+            font-size: 2em;
+            color: #305144;
+            font-weight: bold;
+        }
+
+        .metric-stars {
+            color: #ffd700;
+            font-size: 1.2em;
+        }
+
+        .metric-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #305144 0%, #20b068 100%);
+            color: white;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+        }
+
+        .metric-progress-bar {
+            background: #e0e0e0;
+            border-radius: 10px;
+            height: 8px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .metric-progress-fill {
+            background: linear-gradient(90deg, #305144 0%, #20b068 100%);
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.6s ease;
+        }
+
+        .top-metric-badge {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div style="text-align: center; margin-bottom: 20px;">
+                    <div class="logo">MACRO Development and Training</div>
+                    <div class="tagline">Empowering Teams Through Expert Microsoft Training</div>
+            </div>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-number">345</div>
+                    <div class="hero-stat-label">📝 Training Reviews</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">4.80</div>
+                    <div class="hero-stat-label">⭐ Average Rating (5.0 Scale)</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">1,855</div>
+                    <div class="hero-stat-label">⏱️ Training Hours Delivered</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-number">95.5%</div>
+                    <div class="hero-stat-label">🌟 4-5 Star Ratings</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="section">
+            <h2>📊 Training Portfolio Analytics</h2>
+            <p style="font-size: 1.15em; color: #666; margin-bottom: 30px;">
+                Comprehensive overview of training programs delivered across California's leading companies and educational institutions. Our data-driven approach ensures we're meeting the evolving needs of modern workplaces.
+            </p>
+
+            <div class="stats-highlight">
+                <div class="stat-box">
+                    <div class="stat-box-number">19</div>
+                    <div class="stat-box-label">📚 Active Training Topics</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-number">167</div>
+                    <div class="stat-box-label">🎓 Total Training Sessions</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-number">498</div>
+                    <div class="stat-box-label">💼 Professional Excel Hours</div>
+                </div>
+                <div class="stat-box">
+                    <div class="stat-box-number">65%</div>
+                    <div class="stat-box-label">🤝 Custom/Contract Training</div>
+                </div>
+            </div>
+
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-title">Training Hours by Category</div>
+                    <canvas id="hoursChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-title">Custom vs Open Enrollment</div>
+                    <canvas id="enrollmentChart"></canvas>
+                </div>
+            </div>
+            
+            <div class="chart-container" style="margin-top: 30px;">
+                <div class="chart-title">Training Sessions by Topic</div>
+                <canvas id="sessionsChart"></canvas>
+            </div>
+
+            <div class="insights-box">
+                <h3>💡 Key Training Insights</h3>
+                <ul>
+                    <li><strong>Excel Mastery Program:</strong> Excel training (Core, Professional, Advanced, Elite) represents 993 hours (54%) across 87 sessions. Professional Excel leads with 498 hours, demonstrating strong demand for intermediate-to-advanced spreadsheet skills</li>
+                    <li><strong>Custom Training Focus:</strong> 65% of training hours are custom/contract-based, showing strong enterprise demand for tailored solutions. 35% open enrollment provides accessible public training options</li>
+                    <li><strong>Pathbuilder Success:</strong> Comprehensive Pathbuilder curriculum accounts for 168 hours across 6 sessions, representing a significant specialized program for career development</li>
+                    <li><strong>AI Integration Growth:</strong> Combined AI training (Business + Excel) totals 116 hours across 15 sessions, reflecting rapid workplace adoption of AI-powered tools and workflows</li>
+                    <li><strong>Holistic Development:</strong> Beyond technical skills, Presentation Power-Up (including communication training) delivers 69 hours, emphasizing the importance of soft skills alongside Microsoft expertise</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>✨ What Sets MACRO Apart</h2>
+            
+            <div class="tabs-container">
+                <div class="tab-buttons">
+                    <button class="tab-button active" onclick="switchTab('reviews')">⭐ Student Reviews</button>
+                    <button class="tab-button" onclick="switchTab('etp')">💰 Creative Funding</button>
+                    <button class="tab-button" onclick="switchTab('ai-governance')">🤖 AI Governance</button>
+                </div>
+
+                <!-- Reviews Tab -->
+                <div id="reviews-tab" class="tab-content active">
+                    <h3 style="color: #305144; font-size: 1.6em; margin: 40px 0 25px 0; border-bottom: 3px solid #20b068; padding-bottom: 10px;">
+                        📊 Training Performance Metrics
+                    </h3>
+                    <p style="font-size: 1.1em; color: #666; margin-bottom: 30px;">
+                        Real feedback from students across major California companies and educational institutions. Our comprehensive training programs consistently deliver exceptional results. 🎯
+                    </p>
+                    
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-title">Instructor Knowledge 🎓 <span class="top-metric-badge">TOP RATED</span></div>
+                            <div class="metric-rating">
+                                <div class="metric-number">4.94</div>
+                                <div class="metric-stars">★★★★★</div>
+                            </div>
+                            <div class="metric-badge">95.1% gave 5 stars</div>
+                            <div class="metric-progress-bar">
+                                <div class="metric-progress-fill" style="width: 98.8%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-title">Level of Preparation 📚 <span class="top-metric-badge">TOP RATED</span></div>
+                            <div class="metric-rating">
+                                <div class="metric-number">4.92</div>
+                                <div class="metric-stars">★★★★★</div>
+                            </div>
+                            <div class="metric-badge">93.3% gave 5 stars</div>
+                            <div class="metric-progress-bar">
+                                <div class="metric-progress-fill" style="width: 98.4%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-title">Addressing Class Needs 🎯</div>
+                            <div class="metric-rating">
+                                <div class="metric-number">4.90</div>
+                                <div class="metric-stars">★★★★★</div>
+                            </div>
+                            <div class="metric-badge">91.6% gave 5 stars</div>
+                            <div class="metric-progress-bar">
+                                <div class="metric-progress-fill" style="width: 98%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-title">Future Training Interest 🔄</div>
+                            <div class="metric-rating">
+                                <div class="metric-number">4.88</div>
+                                <div class="metric-stars">★★★★★</div>
+                            </div>
+                            <div class="metric-badge">90.1% gave 5 stars</div>
+                            <div class="metric-progress-bar">
+                                <div class="metric-progress-fill" style="width: 97.6%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-title">Overall Satisfaction ⭐</div>
+                            <div class="metric-rating">
+                                <div class="metric-number">4.85</div>
+                                <div class="metric-stars">★★★★★</div>
+                            </div>
+                            <div class="metric-badge">88.1% gave 5 stars</div>
+                            <div class="metric-progress-bar">
+                                <div class="metric-progress-fill" style="width: 97%"></div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-title">Materials Quality 📖</div>
+                            <div class="metric-rating">
+                                <div class="metric-number">4.83</div>
+                                <div class="metric-stars">★★★★★</div>
+                            </div>
+                            <div class="metric-badge">86.7% gave 5 stars</div>
+                            <div class="metric-progress-bar">
+                                <div class="metric-progress-fill" style="width: 96.6%"></div>
+                            </div>
+                        </div>
+
+
+                    </div>
+
+                    <h3 style="color: #305144; font-size: 1.6em; margin: 50px 0 25px 0; border-bottom: 3px solid #20b068; padding-bottom: 10px;">
+                        💬 What Students Are Saying
+                    </h3>
+
+
+                    <div class="quotes-section">
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="featured-badge">★ Top Rated Review</div>
+                            <div class="quote-text">
+                                "Myke's teaching was truly exceptional, leaving an indelible mark on all attendees. His innovative teaching methods kept everybody engaged and stimulated. He genuinely is committed to the success and growth of every attendee. Thank You Myke."
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="featured-badge">★ Featured Review</div>
+                            <div class="quote-text">
+                                "Excellent trainer!! Myke is very knowledgeable and engaging with the group!"
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="featured-badge">★ Featured Review</div>
+                            <div class="quote-text">
+                                "Myke was an excellent trainer that kept the class entertained and engaged the whole time. He provided plenty of examples that helped tie in the lessons to our day to day, and also encouraged us to participate in the activities."
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="quote-text">
+                                "Training was excellent. Myke is very knowledgeable and he makes the class very fun."
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="featured-badge">★ Featured Review</div>
+                            <div class="quote-text">
+                                "This has been my favorite course I've taken by far. Myke is a very knowledgeable individual, and makes learning fun. Would love to take another one of his courses in the future."
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="featured-badge">★ Featured Review</div>
+                            <div class="quote-text">
+                                "Myke has been the BEST teacher I have had so far out of all of my classes! I would take any class he is teaching! He keeps it fun, funky, and fresh!!!!"
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="quote-text">
+                                "Myke is an exceptional instructor. The patience and positive reinforcement he exudes are exemplary and inspiring."
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="quote-text">
+                                "Myke is the absolute best!!! He makes class so much fun, he's constantly adding more information so no matter how many times you take the class you keep learning more."
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="quote-text">
+                                "Myke was amazing! Very knowledgeable and fun at the same time! I learned so much!!"
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="quote-text">
+                                "Absolutely fantastic job. Kept it light while being very informative. Myke did an amazing job."
+                            </div>
+                        </div>
+
+                        <div class="quote-card">
+                            <div class="quote-icon">"</div>
+                            <div class="featured-badge">★ Featured Review</div>
+                            <div class="quote-text">
+                                "It's so fun to learn from someone who is obviously passionate about all things Microsoft and AI. The day went by so fast, I will definitely be signing up for future classes with Mike."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ETP Funding Tab -->
+                <div id="etp-tab" class="tab-content">
+                    <div class="etp-section">
+                        <div class="etp-header">
+                            <div class="etp-logo-container">
+                                <img src="data:image/jpeg;base64,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" alt="California Employment Training Panel" class="etp-logo">
+                            </div>
+                            <div>
+                                <div class="etp-title">💰 Low to No-Cost Training for California Companies</div>
+                                <div class="etp-subtitle">Leverage ETP Funding to Upskill Your Workforce</div>
+                            </div>
+                        </div>
+
+                        <div class="etp-content">
+                            <h3>What is ETP?</h3>
+                            <p>The California Employment Training Panel (ETP) provides funding to employers to assist in upgrading the skills of their workers through training that leads to good paying, long-term jobs. MACRO Development partners with San Bernardino Community College District (SBCCD) to bring these benefits directly to your organization.</p>
+
+                            <div class="etp-highlight">
+                                Training costs are covered through state funding—making upskilling affordable and accessible for California businesses.
+                            </div>
+
+                            <h3>How Does It Work?</h3>
+                            <p>MACRO Development acts as both the training provider and convener to state funds. All ETP compliance, documentation, and reporting is managed by SBCCD, while we deliver the high-quality Microsoft and professional development training your team needs.</p>
+
+                            <h3>Qualifying for ETP Funding</h3>
+                            <p>California companies may qualify if they:</p>
+                            <ul>
+                                <li>Are located in California and employ California residents</li>
+                                <li>Provide full-time employment opportunities</li>
+                                <li>Commit to retaining trainees for a specified period post-training</li>
+                                <li>Contribute to California's unemployment insurance fund</li>
+                                <li>Meet wage and job creation requirements</li>
+                            </ul>
+
+                            <h3>Available Training Programs</h3>
+                            <p>Through ETP funding, MACRO Development offers our full curriculum including:</p>
+                            <ul>
+                                <li>Microsoft Excel (Core, Professional, Advanced, Elite)</li>
+                                <li>AI for Business and AI for Excel</li>
+                                <li>Microsoft 365 Professional Suite</li>
+                                <li>Presentation and Communication Skills</li>
+                                <li>Custom contract training tailored to your organization</li>
+                                <li>AI Governance Committee Development (see AI Governance tab)</li>
+                            </ul>
+
+                            <div class="etp-highlight">
+                                Contact MACRO Development today to explore ETP funding opportunities and start upskilling your workforce at little to no cost.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- AI Governance Tab -->
+                <div id="ai-governance-tab" class="tab-content">
+                    <div class="ai-governance-section">
+                        <h2 style="color: #305144; margin-bottom: 25px; border: none; padding: 0;">🤖 AI Governance Committee Development</h2>
+                        <p style="font-size: 1.15em; color: #666; margin-bottom: 30px; line-height: 1.8;">
+                            Companies are deploying AI tools across departments without formal policies—creating significant liability risks. MACRO Development helps you establish enforceable AI governance through structured facilitation that qualifies for ETP funding.
+                        </p>
+
+                        <div class="service-box">
+                            <h3>⚠️ The Problem</h3>
+                            <p>Companies are using AI everywhere but have zero policies around it. Can't enforce what doesn't officially exist, and that's becoming a real liability issue.</p>
+                        </div>
+
+                        <div class="service-box">
+                            <h3>🎯 Our Approach</h3>
+                            <p>Same proven model we use for ISO certification prep and Lean Six Sigma projects—structured facilitation that gets you compliant policies while qualifying for ETP funding. Not theoretical classroom training, but actual collaborative work with your stakeholders.</p>
+                        </div>
+
+                        <div class="service-box">
+                            <h3>✅ What We Do</h3>
+                            <ul style="margin-left: 20px; margin-top: 10px;">
+                                <li><strong>Stakeholder Workshops:</strong> Map current AI usage across all departments to understand your organization's AI footprint</li>
+                                <li><strong>Risk Assessment Sessions:</strong> Work with your team to identify potential compliance, security, and liability issues</li>
+                                <li><strong>Collaborative Policy Drafting:</strong> Facilitate creation of enforceable AI governance policies with key stakeholders—not generic templates</li>
+                                <li><strong>Handbook Integration:</strong> Ensure policies align with existing employee handbook and company culture</li>
+                                <li><strong>Implementation Roadmap:</strong> Develop clear accountability measures and rollout strategy</li>
+                            </ul>
+                        </div>
+
+                        <div class="service-box">
+                            <h3>📋 ETP Compliance Angle</h3>
+                            <p>This qualifies as workforce development training under ETP guidelines—we're building internal capacity for AI governance while creating measurable skills development for your management team. Same structure we've used successfully for ISO and Six Sigma projects.</p>
+                        </div>
+
+                        <div class="service-box">
+                            <h3>🏆 End Result</h3>
+                            <p>Enforceable AI policies, trained internal stakeholders who can maintain and update governance frameworks, and comprehensive documentation that satisfies both compliance requirements and ETP reporting standards.</p>
+                        </div>
+
+                        <div class="etp-highlight">
+                            Interested in developing AI governance for your organization? Contact MACRO Development to discuss how we can help you establish policies while leveraging ETP funding.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section cta-section">
+            <h2>🚀 Ready to Transform Your Team's Skills?</h2>
+            <p class="cta-text">
+                Join hundreds of satisfied students from California's leading organizations. Our proven training programs deliver measurable results with exceptional instructor expertise across the full Microsoft ecosystem.
+            </p>
+            <a href="https://macdevtraining.com/" class="cta-button">Schedule Your Training Today</a>
+            <p style="margin-top: 30px; font-size: 1em; opacity: 0.95;">
+                Specializing in Excel, AI Integration, Microsoft 365, Power BI, and Custom Training Solutions
+            </p>
+        </div>
+    </div>
+
+    <script>
+        // Training sessions data (normalized categories)
+        const sessionsData = {
+            labels: [
+                'Professional Excel',
+                'Core Excel',
+                'Advanced Excel',
+                'AI for Business',
+                'Presentation Power-Up',
+                'MS Word',
+                'Outlook',
+                'Pathbuilder',
+                'Career Math',
+                'MS Elite'
+            ],
+            datasets: [{
+                label: 'Training Sessions',
+                data: [32, 29, 22, 12, 9, 9, 8, 6, 5, 4],
+                backgroundColor: [
+                    'rgba(48, 81, 68, 0.9)',
+                    'rgba(32, 176, 104, 0.9)',
+                    'rgba(50, 68, 63, 0.9)',
+                    'rgba(48, 81, 68, 0.75)',
+                    'rgba(32, 176, 104, 0.75)',
+                    'rgba(50, 68, 63, 0.75)',
+                    'rgba(48, 81, 68, 0.6)',
+                    'rgba(32, 176, 104, 0.6)',
+                    'rgba(50, 68, 63, 0.6)',
+                    'rgba(48, 81, 68, 0.5)'
+                ],
+                borderColor: 'rgba(48, 81, 68, 1)',
+                borderWidth: 2
+            }]
+        };
+
+        // Training hours data (normalized categories)
+        const hoursData = {
+            labels: [
+                'Professional Excel',
+                'Advanced Excel',
+                'Core Excel',
+                'Pathbuilder',
+                'Other',
+                'AI for Business',
+                'Presentation Power-Up',
+                'MS Word',
+                'Outlook',
+                'MS Project 24hr',
+                'MS Elite',
+                'Career Math',
+                'AI For Excel',
+                'Power BI',
+                'MS365 Professional',
+                'Google Sheets/Gemini',
+                'Intro to MS365',
+                'Computer Skills'
+            ],
+            datasets: [{
+                label: 'Training Hours',
+                data: [498, 264, 231, 168, 167, 92, 69, 66, 59, 52, 40, 37, 24, 16, 16, 16, 16, 16],
+                backgroundColor: [
+                    'rgba(48, 81, 68, 0.95)',
+                    'rgba(32, 176, 104, 0.95)',
+                    'rgba(50, 68, 63, 0.95)',
+                    'rgba(48, 81, 68, 0.85)',
+                    'rgba(32, 176, 104, 0.85)',
+                    'rgba(50, 68, 63, 0.85)',
+                    'rgba(48, 81, 68, 0.75)',
+                    'rgba(32, 176, 104, 0.75)',
+                    'rgba(50, 68, 63, 0.75)',
+                    'rgba(48, 81, 68, 0.65)',
+                    'rgba(32, 176, 104, 0.65)',
+                    'rgba(50, 68, 63, 0.65)',
+                    'rgba(48, 81, 68, 0.55)',
+                    'rgba(32, 176, 104, 0.55)',
+                    'rgba(50, 68, 63, 0.55)',
+                    'rgba(48, 81, 68, 0.45)',
+                    'rgba(32, 176, 104, 0.45)',
+                    'rgba(50, 68, 63, 0.45)'
+                ],
+                borderColor: '#ffffff',
+                borderWidth: 3
+            }]
+        };
+
+        // Sessions chart configuration
+        const sessionsConfig = {
+            type: 'bar',
+            data: sessionsData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(48, 81, 68, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#20b068',
+                        borderWidth: 2
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            color: '#305144',
+                            font: {
+                                size: 12,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        ticks: {
+                            color: '#305144',
+                            font: {
+                                size: 11
+                            },
+                            maxRotation: 45,
+                            minRotation: 45
+                        },
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        };
+
+        // Hours chart configuration
+        const hoursConfig = {
+            type: 'doughnut',
+            data: hoursData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            color: '#305144',
+                            font: {
+                                size: 11
+                            },
+                            padding: 10
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: 'rgba(48, 81, 68, 0.9)',
+                        titleColor: '#fff',
+                        bodyColor: '#fff',
+                        borderColor: '#20b068',
+                        borderWidth: 2,
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ';
+                                }
+                                label += context.parsed + ' hours';
+                                return label;
+                            }
+                        }
+                    },
+                    datalabels: {
+                        color: '#fff',
+                        font: {
+                            weight: 'bold',
+                            size: 14
+                        },
+                        formatter: function(value, context) {
+                            // Only show labels for top 3 values (498, 264, 231)
+                            if (value >= 231) {
+                                return value + ' hrs';
+                            }
+                            return '';
+                        },
+                        anchor: 'center',
+                        align: 'center'
+                    }
+                }
+            }
+        };
+
+        // Initialize charts
+        window.onload = function() {
+            const sessionsCtx = document.getElementById('sessionsChart').getContext('2d');
+            new Chart(sessionsCtx, sessionsConfig);
+
+            const hoursCtx = document.getElementById('hoursChart').getContext('2d');
+            new Chart(hoursCtx, hoursConfig);
+            
+            // Enrollment type chart
+            const enrollmentCtx = document.getElementById('enrollmentChart').getContext('2d');
+            const enrollmentData = {
+                labels: ['Custom/Contract Training', 'Open Enrollment'],
+                datasets: [{
+                    data: [65.3, 34.7],
+                    backgroundColor: [
+                        'rgba(48, 81, 68, 0.9)',
+                        'rgba(32, 176, 104, 0.9)'
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 3
+                }]
+            };
+            
+            new Chart(enrollmentCtx, {
+                type: 'pie',
+                data: enrollmentData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                color: '#305144',
+                                font: {
+                                    size: 13,
+                                    weight: 'bold'
+                                },
+                                padding: 20
+                            }
+                        },
+                        tooltip: {
+                            backgroundColor: 'rgba(48, 81, 68, 0.9)',
+                            titleColor: '#fff',
+                            bodyColor: '#fff',
+                            borderColor: '#20b068',
+                            borderWidth: 2,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.label + ': ' + context.parsed.toFixed(1) + '%';
+                                }
+                            }
+                        },
+                        datalabels: {
+                            color: '#fff',
+                            font: {
+                                weight: 'bold',
+                                size: 18
+                            },
+                            formatter: function(value) {
+                                return value.toFixed(1) + '%';
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        // Tab switching function
+        function switchTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
